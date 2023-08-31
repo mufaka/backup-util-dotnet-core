@@ -17,10 +17,25 @@ namespace BackupUtilityCore.YAML
         /// <returns>Key/Value pairs from parsed file.</returns>
         public static Dictionary<string, object> ParseFile(string path)
         {
-            Dictionary<string, object> keyValues = new();
-
             // Open file for reading
             using StreamReader streamReader = new(path);
+            return ParseFromStream(streamReader);
+        }
+
+        /// <summary>
+        /// Parses YAML string into Dictionary of keys/values.
+        /// </summary>
+        /// <param name="path">The YAML as a string</param>
+        /// <returns>Key/Value pairs from parsed string.</returns>
+        public static Dictionary<string, object> ParseString(string yaml)
+        {
+            using StreamReader streamReader = new(yaml);
+            return ParseFromStream(streamReader);
+        }
+
+        private static Dictionary<string, object> ParseFromStream(StreamReader streamReader)
+        {
+            Dictionary<string, object> keyValues = new();
 
             string? line;
             string? currentKey = null;

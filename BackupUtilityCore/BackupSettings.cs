@@ -173,6 +173,35 @@ namespace BackupUtilityCore
                 SettingsFilename = System.IO.Path.GetFileName(settingsPath)
             };
 
+            return TryGetExpectedSettings(settings, keyValuePairs);
+        }
+
+        /// <summary>
+        /// Parses backup settings from a YAML string.
+        /// </summary>
+        /// <param name="settingsString">The YAML string</param>
+        /// <param name="settings">BackupSettings object</param>
+        /// <returns>true if parsed ok<returns>
+        public static bool TryParseFromYamlString(string settingsString, out BackupSettings settings)
+        {
+            ///////////////////////////////////////////
+            // Parse config from string
+            ///////////////////////////////////////////
+            Dictionary<string, object> keyValuePairs = YAML.YamlParser.ParseString(settingsString);
+
+            ///////////////////////////////////////////
+            // Initialize settings object
+            ///////////////////////////////////////////
+            settings = new BackupSettings()
+            {
+                SettingsFilename = "N/A"
+            };
+
+            return TryGetExpectedSettings(settings, keyValuePairs);
+        }
+
+        private static bool TryGetExpectedSettings(BackupSettings settings, Dictionary<string, object> keyValuePairs)
+        {
             ///////////////////////////////////////////
             // Check key/values for expected settings
             ///////////////////////////////////////////

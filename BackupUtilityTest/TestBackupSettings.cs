@@ -345,6 +345,48 @@ namespace BackupUtilityTest
             CompareArrays(testExcludedDirs, settings.ExcludedFileTypes);
         }
 
+        [TestMethod]
+        public void TestParseFromYamlString()
+        {
+            string targetPath = Path.Combine(testRoot, "test-parse-config.yaml");
+
+            // Create copy of local resource
+            EmbeddedResource.CreateCopyFromPath(TestConfig.ResourcePath, targetPath);
+
+            var yamlFileContent = File.ReadAllText(targetPath);
+
+            // Parse newly created file
+            Assert.IsTrue(BackupSettings.TryParseFromYamlString(yamlFileContent, out BackupSettings settings));
+
+            // Verify parsed file
+            Assert.IsNotNull(settings);
+            Assert.IsTrue(settings.Valid);
+            Assert.AreEqual(Path.GetFileName(targetPath), settings.SettingsFilename);
+
+            // Compare values to test-config.yaml (embedded resource)
+            Assert.AreEqual(BackupType.Sync, settings.BackupType);
+            Assert.AreEqual(false, settings.IgnoreHiddenFiles);
+            Assert.AreEqual(14, settings.MaxIsololationDays);
+            Assert.AreEqual(@"C:\Target\Test", settings.TargetDirectory);
+
+            string[] testSource = new string[]
+            {
+                @"C:\Source\Projects",
+                @"C:\Source\Documents"
+            };
+
+            CompareArrays(testSource, settings.SourceDirectories);
+
+            CompareArrays(System.Array.Empty<string>(), settings.ExcludedDirectories);
+
+            string[] testExcludedDirs = new string[]
+            {
+                "zip"
+            };
+
+            CompareArrays(testExcludedDirs, settings.ExcludedFileTypes);
+        }
+
         private static void CompareArrays(string[] source, string[] target)
         {
             Assert.AreEqual(source.Length, target.Length);
