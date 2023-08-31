@@ -14,7 +14,15 @@ namespace BackupUtilityTest.Helper
         {
             using FileStream f = new(path, FileMode.Create);
 
-            byte[] testBytes = "TEST"u8.ToArray();
+            byte[] testBytes = new byte[]
+            {
+                0x54,
+                0x45,
+                0x53,
+                0x54
+            };
+            // UTF-8 literals not available
+            //byte[] testBytes = "TEST"u8.ToArray();
 
             f.Write(testBytes, 0, testBytes.Length);
             f.Close();
@@ -27,7 +35,15 @@ namespace BackupUtilityTest.Helper
         {
             using FileStream f = new(path, FileMode.Append);
 
-            byte[] testBytes = "MOD"u8.ToArray();
+            byte[] testBytes = new byte[]
+            {
+                            0x4d,
+                            0x4f,
+                            0x44
+            };
+
+            // UTF-8 literals not available
+            //byte[] testBytes = "MOD"u8.ToArray();
 
             f.Write(testBytes, 0, testBytes.Length);
             f.Close();
