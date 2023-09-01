@@ -29,8 +29,11 @@ namespace BackupUtilityCore.YAML
         /// <returns>Key/Value pairs from parsed string.</returns>
         public static Dictionary<string, object> ParseString(string yaml)
         {
-            using StreamReader streamReader = new(yaml);
-            return ParseFromStream(streamReader);
+            using (var stringStream = GenerateStreamFromString(yaml))
+            {
+                using StreamReader streamReader = new(stringStream);
+                return ParseFromStream(streamReader);
+            }
         }
 
         private static Dictionary<string, object> ParseFromStream(StreamReader streamReader)
@@ -172,6 +175,16 @@ namespace BackupUtilityCore.YAML
 
                 return false;
             }
+        }
+
+        public static Stream GenerateStreamFromString(string s)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
     }
 }
