@@ -40,6 +40,15 @@ excluded_types:
 ...
 ```
 
+### A note on SMB shares
+That target_dir must be accessible from the command line on the Agent host system. Therefore, UNC paths will only work on Windows systems while mount points should be used on Linux and MacOS. The configuration for target_dir above is for Windows. On MacOS, the same share would be defined as follows:
+
+```
+target_dir: /Volumes/USB_Storage/Backup
+```
+
+*Be sure to take heed of the warning at the top of the page. You should define unique root paths on the backup device for the target_dir of each Agent that will perform a backup.*
+
 ## Configuration Settings
 The following settings can be configured within the YAML configuration file. Most settings are required to be defined within the configuration file. If any critical setting is missing, or the value is inappropriate, then the settings will not validate and the backup will not be run and the app will exit with an error.
 
