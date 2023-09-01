@@ -1,173 +1,44 @@
-# Backup Utility (.NET 7.0)
+# KronoMata.Plugins.Backup
+This is an IPlugin implementation for [KronoMata](https://github.com/mufaka/KronoMata) that adapts the [backup-util-dotnet-core](https://github.com/freedom35/backup-util-dotnet-core) Console application for use in KronoMata.
 
-Backup Utility is a console app that copies files from multiple source directories to a common target directory.  
+## Warning
+If you use the 'sync' backup type, ensure that the target directory (target_dir) is empty or only includes files expected to be in the source directories (source_dirs). The sync backup type will delete files from the target directory that do not exist in the source directories.
 
-The app is written as a **.NET 7.0** console app rather than a service in order to remain portable between Windows, macOS, and Linux.  
-  
-Typical cloud backup services only allow you to sync a single directory. Backup Utility can be used to selectively copy multiple source directories to the target directory of your chosen cloud provider. It may also be used to backup files to your own network or USB drive.  
+## Sample Configuration
 
-Multiple configuration files can be configured with different target directories if you need to backup to multiple cloud drives.
+![image](https://github.com/mufaka/backup-util-dotnet-core/assets/8632538/095a09ad-5742-4f77-953c-89ef69fee9fd)
 
-Certain file types or directories may be excluded in order to save space on the target drive. For example, in a developer environment, build type folders (such as bin and obj) can be excluded as these may take up unnecessary space and are easily recreated by rebuilding a project/solution.
-
-Supported configuration files are in YAML format.  
-  
-You are welcome to use/update this software under the terms of the **MIT license**.  
-<br />
-
-## Microsoft .NET in a Nutshell
-Microsoft .NET has gone through a rebranding where **.NET Core is now simply known as .NET**, and .NET 5.0+ is essentially an update to .NET Core 3.1. Microsoft jumped ahead to v5.0 when rebranding in order to avoid confusion with the Windows only .NET Framework 4.8 (which is now end of life). 
-<br />
-  
-## Requirements
-Executing the app requires [.NET 7.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0/runtime) to be installed.  
-
-Config files (**YAML**) can be edited using any text editor. See section ***Creating a Default Config*** below for creating a default/starter config file.
-  
-To build the project you will need the [.NET 7.0 SDK](https://dotnet.microsoft.com/download/dotnet/7.0). 
-
-For development and debugging you will need an IDE:  
-- [Visual Studio](https://visualstudio.microsoft.com) is a fully-featured IDE with built-in support for C# and comes pre-packaged with the .NET 7.0 SDK in VS2022 (newer versions may require optional install). Versions of Visual Studio are available for both [Windows](https://visualstudio.microsoft.com/vs/) and [Mac](https://visualstudio.microsoft.com/vs/mac/).  
-- [Visual Studio Code](https://code.visualstudio.com) is a more light-weight code editor that supports development via installation of a C# extension. Visual Studio Code is cross-platform with versions available for [Windows, Linux, and Mac](https://code.visualstudio.com/Download).  
-
-<br />
-
-## Building
-Building the app project will create a **cross-platform DLL** in either the **debug** or **release** directory, depending on your [build options](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build#options).  
-
-You can either build the app from within the IDE menu (if supported) or by running an [SDK command](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-build) from the terminal when the solution or project file is in the current directory.
-
-**Debug (default build):**
-```sh
-$ dotnet build
-```  
-or
-```sh
-$ dotnet build -c debug
-```  
-
-
-**Release:**
-```sh
-$ dotnet build -c release
-```  
-
-<br/>
-
-## Publishing
-Once the .NET SDK has been installed, you can **publish** the app via Visual Studio or the [command line](https://docs.microsoft.com/en-us/dotnet/core/deploying/). This enables you to create an OS specific executable should you wish to do so.  
-
-To publish via the command line, browse to the **BackupUtilityCore** project directory and run one of the following commands, depending on your target OS:
-
-**Cross-Platform DLL:**
-```sh
-$ dotnet publish -c release
-```  
-
-**Windows Executable:**
-```sh
-$ dotnet publish -c release -r win-x64
-``` 
-
-**Mac Executable:**
-```sh
-$ dotnet publish -c release -r osx-x64
-``` 
-
-**Linux Executable:**
-```sh
-$ dotnet publish -c release -r linux-x64
-```  
-For further options, refer to the [.NET publishing documentation](https://docs.microsoft.com/en-us/dotnet/core/deploying/).  
-<br />
-
-## Usage
-The portable version of the app (**backuputil.dll**) can be executed on either **Windows**, **macOS**, or **Linux**.  
-
-To execute the portable version, open a terminal window and change to the directory containing the app.  
-
-The portable app (**backuputil.dll**) can be executed via the .NET framework using the following command:
-```sh
-$ dotnet backuputil.dll [option] [<filename>]
-```  
-
-Alternatively, if the project has been [published](https://docs.microsoft.com/en-us/dotnet/core/deploying/#publish-framework-dependent) to target the local platform, the **publish** directory will also contain a native bootstrap file for executing the app.  
-
-The specific command line to run the **executable** with vary depending on the OS:
-
-**Windows:**
-```sh
-$ backuputil [option] [<filename>]
 ```
+﻿---
 
-**Mac / Linux:**
-```sh
-$ ./backuputil [option] [<filename>]
-```
-<br />
+# Backup type (Copy/Sync/Isolated)
+backup_type: sync
 
-## Help
-Help info can be displayed in the console using the **--help**, **-h**, or **-?** option:  
-  
-*Examples:*
-```sh
-$ dotnet backuputil.dll --help
-```
-```sh
-$ dotnet backuputil.dll -h
-```
-```sh
-$ dotnet backuputil.dll -?
-```
-<br />
-  
-## Version
-Version info can be displayed in the console using the **--version** or **-v** option:  
-  
-*Examples:*
-```sh
-$ dotnet backuputil.dll --version
-```
-```sh
-$ dotnet backuputil.dll -v
-```
-<br />
-  
-## Creating a Default Config
-A default YAML configuration file can be created using either the **--create** or **-c** option followed by a config name.  
-The config file path is considered relative to the current directory unless the full path is provided.  
-  
-*Examples:*
-```sh
-$ dotnet backuputil.dll --create config1.yaml
-```
-```sh
-$ dotnet backuputil.dll -c config1.yaml
-```
-```sh
-$ dotnet backuputil.dll -c C:\Configs\config1.yaml
-```  
+# Max number of days to keep backups when using 'isolated' backup type 
+# (zero for no limit)
+max_isolation_days: 14
 
-<br />
+# Hidden files
+ignore_hidden_files: false
 
-## Running a Backup
-The name of the backup configuration file to be run should be provided as a command line argument after either the **--run** or **-r** option.  
-The config file path is considered relative to the current directory unless the full path is provided.  
-  
-*Examples:*  
-```sh
-$ dotnet backuputil.dll --run config1.yaml
-```
-```sh
-$ dotnet backuputil.dll -r config1.yaml
-```
-```sh
-$ dotnet backuputil.dll -r /Users/freedom35/Configs/config1.yaml
-```
+# Specify root target directory for backup
+target_dir: \\10.10.11.1\USB_Storage\Backup
 
-Note: For frequent use, you can also run the app via a shortcut or automated script with your configuration file specified in the shortcut settings or script as a command line arg.
-  
-<br />
+# Add each source directory to backup...
+source_dirs:
+ - D:\KronoMata\Publish\Web\Database
+ - D:\KronoMata\Publish\Web\PackageRoot
+ - D:\JupyterRoot
+
+# Add any excluded directories
+excluded_dirs: []
+
+# Add extensions for excluded file types
+excluded_types:
+ - zip 
+
+...
+```
 
 ## Configuration Settings
 The following settings can be configured within the YAML configuration file. Most settings are required to be defined within the configuration file. If any critical setting is missing, or the value is inappropriate, then the settings will not validate and the backup will not be run and the app will exit with an error.
