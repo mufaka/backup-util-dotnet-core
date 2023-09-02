@@ -21,12 +21,13 @@ namespace KronoMata.Plugins.Backup
     public class BackupPlugin : IPlugin
     {
         private StringBuilder _backupTaskLog = new StringBuilder();
+        private bool _verboseLog = false;
 
         public string Name { get { return "File Backup"; } }
 
         public string Description { get { return "Adapts Alan Barr's (freedom35 on GitHub) backup-util-dotnet-core Console application as a KronoMata Plugin."; } }
 
-        public string Version { get { return "1.0"; } }
+        public string Version { get { return "1.2"; } }
 
         public List<PluginParameter> Parameters
         {
@@ -39,6 +40,14 @@ namespace KronoMata.Plugins.Backup
                     Name = "YAML Configuration",
                     Description = "See https://github.com/mufaka/backup-util-dotnet-core for documentation.",
                     DataType = ConfigurationDataType.Text,
+                    IsRequired = true
+                });
+
+                parameters.Add(new PluginParameter()
+                {
+                    Name = "Verbose Log",
+                    Description = "Include every file name in log detail.",
+                    DataType = ConfigurationDataType.Boolean,
                     IsRequired = true
                 });
 
@@ -84,6 +93,7 @@ namespace KronoMata.Plugins.Backup
                 {
                     // do we have valid YAML?
                     var yaml = pluginConfig["YAML Configuration"];
+                    _verboseLog = pluginConfig["Verbose Log"] == "True";
 
                     if (BackupSettings.TryParseFromYamlString(yaml, out BackupSettings backupSettings))
                     {
@@ -158,7 +168,10 @@ namespace KronoMata.Plugins.Backup
 
         private void BackupTask_Log(object _, MessageEventArgs e)
         {
-            _backupTaskLog.AppendLine(e.ToString());
+            if (_verboseLog || e.Message != "COPYING")
+            {
+                _backupTaskLog.AppendLine(e.ToString());
+            }
         }
 
         private static BackupTaskBase CreateBackupTask(BackupType backupType)
