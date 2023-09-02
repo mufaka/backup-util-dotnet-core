@@ -48,7 +48,7 @@ namespace KronoMata.Plugins.Backup
                     Name = "Verbose Log",
                     Description = "Include every file name in log detail.",
                     DataType = ConfigurationDataType.Boolean,
-                    IsRequired = true
+                    IsRequired = false
                 });
 
                 return parameters;
